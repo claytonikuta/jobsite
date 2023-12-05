@@ -223,27 +223,27 @@ body{
   padding: 10px;
 }
 
-#player-name {
+.player-name {
   margin-bottom: 5px;
   overflow-wrap: break-word;
   word-wrap: break-word;
   max-width: 100%;
 }
 
-#player-score {
+.player-score {
   overflow-wrap: break-word;
   word-wrap: break-word;
   max-width: 100%;
 }
 
 
-#player-name::before {
+.player-name::before {
   content: "Player:";
   margin-right: 5px;
 }
 
 
-#player-score::before {
+.player-score::before {
   content: "Score:";
   margin-right: 5px;
 }

@@ -9,10 +9,8 @@ const game = {
   direction: 'up',
   playerInput: document.getElementById("player-input"),
   startGameButton: document.getElementById("start-button"),
-  playerNameDisplay: document.getElementById("player-name"),
-  playerScoreDisplay: document.getElementById("player-score"),
-  gOPlayerNameDisplay: document.getElementById("game-over-player-name"),
-  gOPlayerScoreDisplay: document.getElementById("game-over-player-score"),
+  playerNameDisplay: document.getElementsByClassName("player-name"),
+  playerScoreDisplay: document.getElementsByClassName("player-score"),
   currentScreen: "#splash-screen",
 
   showGameScreen(screenId) {
@@ -37,13 +35,17 @@ const game = {
         'left': '0px',
         'transform': 'rotate(0deg)'
       });
+      player.score = 0; // Reset player score
+      game.updatePlayerScore(player.score);
       this.spawnPallet();
     } else if (screenId === "#game-over-screen") {
-      this.gOPlayerNameDisplay.textContent = this.playerNameDisplay;
-      this.gOPlayerScoreDisplay.textContent = this.playerScoreDisplay;
       $("#help-modal-trigger").hide();
       $("#end-button").hide();
       document.getElementById("game-over-screen").style.display = "flex";
+      const playerName = player.name;
+      const playerScore = player.score;
+      document.querySelector("#game-over-player .player-name").textContent = playerName;
+      document.querySelector("#game-over-player .player-score").textContent = playerScore;
       clearInterval(game.loopIntervalId);
     } else if (screenId === "#splash-screen") {
       game.playerScoreDisplay.textContent = 0;
@@ -135,11 +137,11 @@ const game = {
   },
 
   addPlayer(oPlayer) {
-    this.playerNameDisplay.textContent = oPlayer;
+    this.playerNameDisplay[0].textContent = oPlayer;
   },
 
   updatePlayerScore(oPlayer) {
-    this.playerScoreDisplay.textContent = oPlayer;
+    this.playerScoreDisplay[0].textContent = oPlayer;
   },
 
   truckCollision() {
@@ -194,10 +196,10 @@ const game = {
       const palletRight = palletRect.right;
   
       if (
-        palletBottom >= truckRect.top &&
-        palletTop <= truckRect.bottom &&
-        palletRight >= truckRect.left &&
-        palletLeft <= truckRect.right
+        palletBottom >= truckRect.top + 20 &&
+        palletTop <= truckRect.bottom - 20 &&
+        palletRight >= truckRect.left + 20 &&
+        palletLeft <= truckRect.right - 20
       ) {
         continue;
       } else {
@@ -431,4 +433,8 @@ $("#end-to-game-over-button").on("click", () => {
 
 $("#quit-btn").on("click", () => {
   game.showGameScreen("#splash-screen");
+});
+
+$("#play-again-btn").on("click", () => {
+  game.showGameScreen("#game-screen");
 });
