@@ -1,0 +1,354 @@
+@charset "utf-8";
+
+html,
+body{
+  margin: 0;
+  padding: 0;
+  font-family: 'Pixelify Sans', sans-serif;
+}
+
+body{
+  margin: auto;
+  margin-top: 10px;
+  width: 1000px;
+  height: 600px;
+}
+
+#screen-container{
+  position: relative;
+  background: url('../images/Caution_Background.jpeg');
+  background-size: cover;
+  width: 1000px;
+  height: 600px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+#button-container{
+  display: flex;
+  gap: 10px;
+  align-self: flex-end;
+  margin: 10px;
+}
+
+/* SPLASH SCREEN */
+
+@-webkit-keyframes breathing {
+  0% {
+    -webkit-transform: scale(0.9);
+    transform: scale(0.9);
+  }
+
+  25% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+
+  60% {
+    -webkit-transform: scale(0.9);
+    transform: scale(0.9);
+  }
+
+  100% {
+    -webkit-transform: scale(0.9);
+    transform: scale(0.9);
+  }
+}
+
+@keyframes breathing {
+  0% {
+    -webkit-transform: scale(0.9);
+    -ms-transform: scale(0.9);
+    transform: scale(0.9);
+  }
+
+  25% {
+    -webkit-transform: scale(1);
+    -ms-transform: scale(1);
+    transform: scale(1);
+  }
+
+  60% {
+    -webkit-transform: scale(0.9);
+    -ms-transform: scale(0.9);
+    transform: scale(0.9);
+  }
+
+  100% {
+    -webkit-transform: scale(0.9);
+    -ms-transform: scale(0.9);
+    transform: scale(0.9);
+  }
+}
+
+#splash-screen{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+#splash-logo {
+  align-items: center;
+  height: 120px;
+  margin-top: 90px;
+  animation-iteration-count: infinite;
+  -webkit-animation: breathing 4s ease-out infinite normal;
+  animation: breathing 4s ease-out infinite normal;
+  -webkit-font-smoothing: antialiased;
+}
+
+#forklift-side-view{
+  margin-top: 15px;
+  margin-right: 20px;
+  align-items: center;
+  height: 120px;
+}
+
+#name-entry,
+#join-id,
+#start-button,
+#help-button{
+  font-family: 'Pixelify Sans', sans-serif;
+  margin-left: 20px;
+}
+
+#player-input{
+  margin-top: 20px;
+}
+
+#play-buttons{
+  display: flex;
+  margin-top: 10px;
+}
+
+#start-button {
+  display: flex;
+  justify-content: center;
+}
+
+/* GAME SCREEN */
+
+#game-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.game-board-container{
+  position: absolute;
+  top: 50%;
+  left: 46%;
+  transform: translate(-50%, -50%);
+  height: 450px;
+  width: 700px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.75);
+  border-radius: 10px;
+  align-items: center;
+  background: url('../images/Floor.jpeg');
+  background-size: cover;
+}
+
+#game-screen-logo{
+  height: 40px;
+  position: absolute;
+  align-self: flex-start;
+  align-items: start;
+  top: 20px;
+  left: 20px;
+}
+
+#forklift{
+  position: relative;
+  top: 0px;
+  left: 0px;
+  height: 80px;
+  width: 80px
+}
+
+#truck{
+  height: 250px;
+  rotate: 270deg;
+  position:absolute;
+  left: 3px;
+}
+
+#pallet{
+  height: 60px;
+  position: relative;
+}
+
+#shelves{
+  height: 100px;
+}
+
+.bi-play {
+  color: white;
+  background-color: green;
+}
+
+.bi-pause {
+  color: white;
+  background-color: red;
+}
+
+#play-button{
+  position: absolute;
+  align-self: flex-start;
+  align-items: start;
+  top: 80px;
+  left: 20px;
+}
+
+#pause-button{
+  position: absolute;
+  align-self: flex-start;
+  align-items: start;
+  top: 80px;
+  left: 20px;
+}
+
+#score-board {
+  height: auto;
+  width: 150px;
+  position: absolute;
+  top: 100px;
+  right: 20px;
+  background-color: white;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+#player-name {
+  margin-bottom: 5px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  max-width: 100%;
+}
+
+#player-score {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  max-width: 100%;
+}
+
+
+#player-name::before {
+  content: "Player:";
+  margin-right: 5px;
+}
+
+
+#player-score::before {
+  content: "Score:";
+  margin-right: 5px;
+}
+
+
+#overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  opacity: 0;
+  display: none;
+  border-radius: 10px;
+  z-index: 1;
+}
+
+#help-modal-trigger,
+#end-button,
+#play-button,
+#pause-button {
+  z-index: 9999;
+}
+
+/* GAME OVER SCREEN */
+
+#game-over-screen{
+  position: absolute;
+  background: url('../images/Game-Over-Background.jpeg');
+  background-size: cover;
+  width: 1000px;
+  height: 600px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+#game-over-title{
+  margin-top: 20px;
+  color: white;
+}
+
+#game-over-player{
+  height: auto;
+  width: 300px;
+  height: 80px;
+  align-content: center;
+  color: white;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 0;
+  padding: 0;
+  font-size: 25px;
+}
+
+#game-over-player-name {
+  margin-bottom: 5px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  max-width: 100%;
+}
+
+#game-over-player-score {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  max-width: 100%;
+}
+
+
+#game-over-player-name::before {
+  content: "Player:";
+  margin-right: 5px;
+}
+
+
+#game-over-player-score::before {
+  content: "Score:";
+  margin-right: 5px;
+}
+
+#game-over-btn-container{
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+#game-over-container{
+  background: rgba(0, 0, 0, 0.75);
+  border-radius: 10px;
+  z-index: 10;
+}
+
+#play-again-btn{
+  margin-right: 20px;
+}
+
+/* OTHER */
+
+#game-screen, 
+#game-over-screen,
+#end-button,
+#splash-help-modal-trigger, 
+#pause-button {
+    display: none;
+}

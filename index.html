@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clayton Assignment 02</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+    crossorigin="anonymous"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css"
+  />
+  <link rel="stylesheet" href="./styles/style.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
+</head>
+<body>
+  <main>
+    <div id="screen-container">
+      <div id="button-container">
+        <button type="button" id="help-modal-trigger" class="btn btn-info">
+          Help
+        </button>
+        <button type="button" id="end-button" class="btn btn-danger">
+          End
+        </button>
+      </div>
+      <div id="splash-screen" class="screen">
+        <img src=".\images\Logo-white.png" alt="Jobsite Logo" id="splash-logo">
+        <img src=".\images\Forklift-Side-View.svg" alt="Forklift Side View" id="forklift-side-view">
+        <div class="player-input">
+          <div id="player-input">
+            <input type="text" id="name-entry" name="name" placeholder="Enter Name" required />
+            <input type="submit" id="join-id" value="Join" />
+          </div>
+          <div id="play-buttons">
+            <input type="submit" id="start-button" value="Start" disabled="disabled">
+          </div>
+        </div>
+      </div>
+      <div id="game-screen" class="screen">
+        <img src=".\images\Logo-White.png" alt="Jobsite Logo" id="game-screen-logo">
+        <div class="game-board-container">
+          <img src=".\images\Forklift.svg" alt="Forklift" id="forklift">
+          <img src=".\images\Truck-2.svg" alt="Truck" id="truck">
+          <img src=".\images\Pallet.svg" alt="Pallet" id="pallet">
+        </div>
+        <div id="score-board">
+          <div id="player">
+              <div id="player-name">Player 1</div>
+              <div id="player-score">0</div>
+          </div>
+        </div>
+        <div id="overlay"></div>
+        <button type="button" id="play-button" class="bi bi-play game-board-button"></button>
+        <button type="button" id="pause-button" class="bi bi-pause game-board-button"></button>
+      </div>
+      <div id="game-over-screen" class="screen">
+        <div id="game-over-container">
+          <h1 id="game-over-title">Game Over</h1>
+          <div id="game-over-player">
+            <div id="game-over-player-name">Player 1</div>
+            <div id="game-over-player-score">0</div>
+          </div>
+          <div id="game-over-btn-container">
+            <button type="button" id="play-again-btn" class="btn btn-info">
+              Play Again
+            </button>
+            <button type="button" id="quit-btn" class="btn btn-danger">
+              Quit
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="modals">
+      <!-- Help Modal -->
+      <div
+      class="modal fade"
+      id="help-modal"
+      tabindex="-1"
+      aria-labelledby="helpModalLabel"
+      aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="helpModalLabel">Setup Instructions</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+              </div>
+              <div class="modal-body">Enter name, select "Join", click "Start".</div>
+              <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                id="more-info-modal-trigger"
+                class="btn btn-primary"
+                data-bs-dismiss="modal"
+              >
+                More Info
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- More Info Modal -->
+      <div
+      class="modal fade"
+      id="more-info-modal"
+      tabindex="-1"
+      aria-labelledby="moreInfoModalLabel"
+      aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="more-info-modal-label">Gameplay Instructions</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+              </div>
+              <div class="modal-body">
+                Move the forklift around the warehouse using the arrow keys and collect 
+                pallets for shipping. Once a pallet has been collected deliver it to the 
+                loading truck. Collect as many pallets as you can before the time runs out!
+              </div>
+              <div class="modal-footer">
+              <button
+                type="button"
+                id="close-button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End Modal -->
+      <div
+      class="modal fade"
+      id="end-modal"
+      tabindex="-1"
+      aria-labelledby="endModalLabel"
+      aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="endModalLabel">End Game?</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+              </div>
+              <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                No
+              </button>
+              <button
+                type="button"
+                id="end-to-game-over-button"
+                class="btn btn-primary"
+                data-bs-dismiss="modal"
+              >
+                Yes
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"
+  ></script>
+  <script src="./scripts/script.js"></script>
+</body>
+</html>
