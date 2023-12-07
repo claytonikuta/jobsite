@@ -7,11 +7,15 @@ const game = {
   palletCarry: false,
   loopDuration: 50,
   direction: 'up',
+  difficulty: '',
+  currentScreen: "#splash-screen",
   playerInput: document.getElementById("player-input"),
   startGameButton: document.getElementById("start-button"),
+  easyButton: document.getElementById("easy-button"),
+  mediumButton: document.getElementById("medium-button"),
+  hardButton: document.getElementById("hard-button"),
   playerNameDisplay: document.getElementsByClassName("player-name"),
   playerScoreDisplay: document.getElementsByClassName("player-score"),
-  currentScreen: "#splash-screen",
 
   showGameScreen(screenId) {
     $("#splash-screen").hide();
@@ -32,12 +36,15 @@ const game = {
       })
       $("#forklift").css({
         'top': '0px',
-        'left': '0px',
+        'left': '-120px',
+        'height': '50px',
         'transform': 'rotate(0deg)'
       });
+      forklift.setAttribute('src', '../images/Forklift.svg');
       player.score = 0; // Reset player score
       game.updatePlayerScore(player.score);
       this.spawnPallet();
+      this.loadObstacles();
     } else if (screenId === "#game-over-screen") {
       $("#help-modal-trigger").hide();
       $("#end-button").hide();
@@ -52,21 +59,43 @@ const game = {
       $("#end-button").hide();
       $("#help-modal-trigger").show();
       $("#player-input").show();
-      $("#player-input").css({
-        'margin-top': '20px',
-      });
-      $("#start-button").css({
-        'margin-top': '0px',
-      });
       $("#screen-container").css({
         'background': 'url("../images/Caution_Background.jpeg")',
-        'background-size': 'cover'
+        'background-size': 'cover',
+        'background-position': 'center',
       });
+      $("#name-entry").attr("placeholder", player.name);
+      $("#name-entry").removeAttr("required");
+
       clearInterval(game.loopIntervalId);
     }
 
     if (this.isRunning) {
       this.gameState();
+    }
+  },
+
+  updateDifficulty(difficulty) {
+    if(difficulty === 'easy'){
+      this.easyButton.style.border = 'solid';
+      this.mediumButton.style.border = 'transparent';
+      this.hardButton.style.border = 'transparent';
+      this.difficulty = 'easy';
+    }
+    else if(difficulty === 'medium'){
+      this.easyButton.style.border = 'transparent';
+      this.mediumButton.style.border = 'solid white';
+      this.hardButton.style.border = 'transparent';
+      this.difficulty = 'medium';
+    }
+    else if(difficulty === 'hard'){
+      this.easyButton.style.border = 'transparent';
+      this.mediumButton.style.border = 'transparent';
+      this.hardButton.style.border = 'solid';
+      this.difficulty = 'hard';
+    }
+    if (this.playerNameDisplay[0].textContent !== '' && this.difficulty !== '') {
+      this.startGameButton.removeAttribute('disabled');
     }
   },
 
@@ -138,38 +167,127 @@ const game = {
 
   addPlayer(oPlayer) {
     this.playerNameDisplay[0].textContent = oPlayer;
+    if (this.difficulty != ''){
+      this.startGameButton.removeAttribute("disabled");
+    }
   },
 
   updatePlayerScore(oPlayer) {
     this.playerScoreDisplay[0].textContent = oPlayer;
   },
 
-  truckCollision() {
-    const forklift = document.getElementById('forklift');
-    const truck = document.getElementById('truck');
-    
-    const forkliftRect = forklift.getBoundingClientRect();
-    const truckRect = truck.getBoundingClientRect();
-  
-    const forkliftTop = forkliftRect.top;
-    const forkliftBottom = forkliftRect.bottom;
-    const forkliftLeft = forkliftRect.left;
-    const forkliftRight = forkliftRect.right;
+  isColliding(rect1, rect2) {
+    return (
+      rect1.left < rect2.right &&
+      rect1.right > rect2.left &&
+      rect1.top < rect2.bottom &&
+      rect1.bottom > rect2.top
+    );
+  },
 
-    const truckTop = truckRect.top;
-    const truckBottom = truckRect.bottom;
-    const truckLeft = truckRect.left;
-    const truckRight = truckRect.right;
+  checkObstacleCollisions() {
+    const forkliftRect = document.getElementById('forklift').getBoundingClientRect();
+    const truckRect = document.getElementById('truck').getBoundingClientRect();
+    const easyObstacles = [
+      document.getElementById('truck').getBoundingClientRect(),
+    ];
+
+    const mediumObstacles = [
+      document.getElementById('truck').getBoundingClientRect(),
+      document.getElementById('shelves1').getBoundingClientRect(),
+      document.getElementById('shelves2').getBoundingClientRect(),
+      document.getElementById('shelves3').getBoundingClientRect(),
+      document.getElementById('shelves4').getBoundingClientRect(),
+      document.getElementById('shelves5').getBoundingClientRect(),
+      document.getElementById('shelves6').getBoundingClientRect(),
+      document.getElementById('shelves7').getBoundingClientRect(),
+      document.getElementById('shelves8').getBoundingClientRect(),
+    ];
+
+    const hardObstacles = [
+      document.getElementById('truck').getBoundingClientRect(),
+      document.getElementById('shelves1').getBoundingClientRect(),
+      document.getElementById('shelves2').getBoundingClientRect(),
+      document.getElementById('shelves3').getBoundingClientRect(),
+      document.getElementById('shelves4').getBoundingClientRect(),
+      document.getElementById('shelves5').getBoundingClientRect(),
+      document.getElementById('shelves6').getBoundingClientRect(),
+      document.getElementById('shelves7').getBoundingClientRect(),
+      document.getElementById('shelves8').getBoundingClientRect(),
+      document.getElementById('box-guy1').getBoundingClientRect(),
+      document.getElementById('box-guy2').getBoundingClientRect(),
+      document.getElementById('box-guys1').getBoundingClientRect(),
+      document.getElementById('box-guys2').getBoundingClientRect(),
+      document.getElementById('pallet-guy').getBoundingClientRect(),
+    ];
   
-    if (
-      forkliftBottom >= truckTop &&
-      forkliftTop <= truckBottom &&
-      forkliftRight >= truckLeft &&
-      forkliftLeft <= truckRight
-    ) {
-      return true;
+    let obstacles = [];
+
+    if (this.difficulty === 'medium') {
+      obstacles = mediumObstacles;
+    } else if (this.difficulty === 'hard') {
+      obstacles = hardObstacles;
     } else {
-      return false;
+      obstacles = easyObstacles;
+    }
+  
+    for (let i = 0; i < obstacles.length; i++) {
+      if (this.isColliding(forkliftRect, truckRect) && this.palletCarry) {
+        return 'score';
+      }
+      if (this.isColliding(forkliftRect, obstacles[i])) {
+        return 'hit';
+      }
+    }
+    
+    return 'safe';
+  },
+
+  loadObstacles() {
+    if (this.difficulty === 'easy'){
+      $("#shelves1").hide();
+      $("#shelves2").hide();
+      $("#shelves3").hide();
+      $("#shelves4").hide();
+      $("#shelves5").hide();
+      $("#shelves6").hide();
+      $("#shelves7").hide();
+      $("#shelves8").hide();
+      $("#box-guy1").hide();
+      $("#box-guy2").hide();
+      $("#box-guys1").hide();
+      $("#box-guys2").hide();
+      $("#pallet-guy").hide();
+    }
+    if (this.difficulty === 'medium'){
+      $("#shelves1").show();
+      $("#shelves2").show();
+      $("#shelves3").show();
+      $("#shelves4").show();
+      $("#shelves5").show();
+      $("#shelves6").show();
+      $("#shelves7").show();
+      $("#shelves8").show();
+      $("#box-guy1").hide();
+      $("#box-guy2").hide();
+      $("#box-guys1").hide();
+      $("#box-guys2").hide();
+      $("#pallet-guy").hide();
+    }
+    if (this.difficulty === 'hard'){
+      $("#shelves1").show();
+      $("#shelves2").show();
+      $("#shelves3").show();
+      $("#shelves4").show();
+      $("#shelves5").show();
+      $("#shelves6").show();
+      $("#shelves7").show();
+      $("#shelves8").show();
+      $("#box-guy1").show();
+      $("#box-guy2").show();
+      $("#box-guys1").show();
+      $("#box-guys2").show();
+      $("#pallet-guy").show();
     }
   },
 
@@ -244,28 +362,27 @@ const game = {
       $("#pallet").hide();
       forklift.setAttribute('src', '../images/Forklift-Loaded.svg');
       $("#forklift").css({
-        'height': '100px',
-        'width': '100px',
+        'height': '60px',
+        // 'width': '70px',
       });
       game.palletCarry = true;
     }
-    if (game.truckCollision() && game.palletCarry && !scoreUpdated){
+    if (game.checkObstacleCollisions() === 'score' && game.palletCarry && !scoreUpdated){
       forklift.setAttribute('src', '../images/Forklift.svg');
       $("#forklift").css({
-        'height': '80px',
-        'width': '80px',
+        'height': '50px',
+        // 'width': '60px',
       });
       game.palletCarry = false;
       player.incrementPlayerScore();
       game.spawnPallet();
       scoreUpdated = true;
     }
-
   },
 };
 
 const player = {
-  name: "Player1",
+  name: '',
   score: 0,
   updatePlayerName(oPlayer){
       this.name = oPlayer;
@@ -279,19 +396,23 @@ const player = {
   moveForkliftUp() {
     const forkliftElement = document.getElementById('forklift');
     const currentPosition = parseInt(window.getComputedStyle(forkliftElement).top);
-    const collision = game.truckCollision();
+    const collision = game.checkObstacleCollisions();
   
-    if (currentPosition > -180) {
-      const newPosition = currentPosition - 10;
-      if (!collision || game.direction === 'down') {
+    if (currentPosition > -210) {
+      const newPosition = currentPosition - 15;
+      if (collision === 'safe' || game.direction === 'down') {
         forkliftElement.style.top = `${newPosition}px`;
         game.direction = 'up';
       } 
-      else if (collision && game.direction === 'left'){
+      else if ((collision === 'hit' || collision === 'score') && game.direction === 'left'){
         forkliftElement.style.top = `${newPosition}px`;
       }
-      else {
-        forkliftElement.style.top = `${currentPosition + 10}px`;
+      else if ((collision === 'hit' || collision === 'score') && game.direction === 'right'){
+        forkliftElement.style.top = `${newPosition}px`;
+      }
+      else{
+        forkliftElement.style.top = `${currentPosition + 15}px`;
+
       }
     }
     forkliftElement.style.transform = 'rotate(0deg)';
@@ -300,20 +421,23 @@ const player = {
   moveForkliftDown() {
     const forkliftElement = document.getElementById('forklift');
     const currentPosition = parseInt(window.getComputedStyle(forkliftElement).top);
-    const collision = game.truckCollision();
+    const collision = game.checkObstacleCollisions();
 
-    if (currentPosition < 180) {
-      const newPosition = currentPosition + 10;
+    if (currentPosition < 210) {
+      const newPosition = currentPosition + 15;
       
-      if (!collision || game.direction === 'up') {
+      if (collision === 'safe' || game.direction === 'up') {
         forkliftElement.style.top = `${newPosition}px`;
         game.direction = 'down';
       } 
-      else if (collision && game.direction === 'left'){
+      else if ((collision === 'hit' || collision === 'score') && game.direction === 'left'){
+        forkliftElement.style.top = `${newPosition}px`;
+      }
+      else if ((collision === 'hit' || collision === 'score') && game.direction === 'right'){
         forkliftElement.style.top = `${newPosition}px`;
       }
       else {
-        forkliftElement.style.top = `${currentPosition - 10}px`;
+        forkliftElement.style.top = `${currentPosition - 15}px`;
       }
     }
     forkliftElement.style.transform = 'rotate(180deg)';
@@ -322,24 +446,26 @@ const player = {
   moveForkliftLeft() {
     const forkliftElement = document.getElementById('forklift');
     const currentPosition = parseInt(window.getComputedStyle(forkliftElement).left);
-    const collision = game.truckCollision();
-    console.log(currentPosition);
+    const collision = game.checkObstacleCollisions();
   
-    if (currentPosition > -280) {
-      const newPosition = currentPosition - 10;
+    if (currentPosition > -310) {
+      const newPosition = currentPosition - 15;
 
-      if (!collision ) {
+      if (collision === 'safe' ) {
         forkliftElement.style.left = `${newPosition}px`;
         game.direction = 'left';
       } 
-      else if (collision && game.direction === "down"){
+      else if ((collision === 'hit' || collision === 'score') && game.direction === "down"){
         forkliftElement.style.left = `${newPosition}px`;
       }
-      else if (collision && game.direction === "up"){
+      else if ((collision === 'hit' || collision === 'score') && game.direction === "up"){
+        forkliftElement.style.left = `${newPosition}px`;
+      }
+      else if ((collision === 'hit' || collision === 'score') && game.direction === "right"){
         forkliftElement.style.left = `${newPosition}px`;
       }
       else {
-        forkliftElement.style.left = `${currentPosition + 10}px`;
+        forkliftElement.style.left = `${currentPosition + 15}px`;
       }
     }
     forkliftElement.style.transform = 'rotate(-90deg)';
@@ -348,12 +474,27 @@ const player = {
   moveForkliftRight() {
     const forkliftElement = document.getElementById('forklift');
     const currentPosition = parseInt(window.getComputedStyle(forkliftElement).left);
-    console.log(currentPosition);
+    const collision = game.checkObstacleCollisions();
 
     if(currentPosition < 320){
-      const newPosition = currentPosition + 10;
-      forkliftElement.style.left = `${newPosition}px`;
-      this.direction = 'right';
+      const newPosition = currentPosition + 15;
+      
+      if (collision === 'safe' ) {
+        forkliftElement.style.left = `${newPosition}px`;
+        game.direction = 'right';
+      } 
+      else if ((collision === 'hit' || collision === 'score') && game.direction === "down"){
+        forkliftElement.style.left = `${newPosition}px`;
+      }
+      else if ((collision === 'hit' || collision === 'score') && game.direction === "up"){
+        forkliftElement.style.left = `${newPosition}px`;
+      }
+      else if ((collision === 'hit' || collision === 'score') && game.direction === "left"){
+        forkliftElement.style.left = `${newPosition}px`;
+      }
+      else {
+        forkliftElement.style.left = `${currentPosition - 15}px`;
+      }
     }
     forkliftElement.style.transform = 'rotate(90deg)';
   },
@@ -361,15 +502,26 @@ const player = {
 
 /*Event listeners*/
 
-document.getElementById("join-id").addEventListener("click", () => {
+document.getElementById("player-input").addEventListener('submit', (event) => {
+  event.preventDefault();
   const nameUpdate = document.getElementById("name-entry");
   if (nameUpdate.value !== "") {
     player.updatePlayerName(nameUpdate.value);
     nameUpdate.value = "";
-    document.getElementById("start-button").removeAttribute("disabled");
     game.playerInput.style.display = "none";
-    game.startGameButton.style.marginTop = "40px";
   }
+});
+
+document.getElementById("easy-button").addEventListener("click", () => {
+  game.updateDifficulty('easy');
+});
+
+document.getElementById("medium-button").addEventListener("click", () => {
+  game.updateDifficulty('medium');
+});
+
+document.getElementById("hard-button").addEventListener("click", () => {
+  game.updateDifficulty('hard');
 });
 
 document.addEventListener('keydown', (event) => {

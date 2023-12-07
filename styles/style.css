@@ -18,6 +18,7 @@ body{
   position: relative;
   background: url('../images/Caution_Background.jpeg');
   background-size: cover;
+  background-position: center;
   width: 1000px;
   height: 600px;
   border-radius: 10px;
@@ -85,13 +86,14 @@ body{
 #splash-screen{
   display: flex;
   align-items: center;
+  justify-items: center;
   flex-direction: column;
 }
 
 #splash-logo {
   align-items: center;
   height: 120px;
-  margin-top: 90px;
+  margin-top: 50px;
   animation-iteration-count: infinite;
   -webkit-animation: breathing 4s ease-out infinite normal;
   animation: breathing 4s ease-out infinite normal;
@@ -105,26 +107,31 @@ body{
   height: 120px;
 }
 
+.player-selection{
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 #name-entry,
 #join-id,
-#start-button,
 #help-button{
   font-family: 'Pixelify Sans', sans-serif;
-  margin-left: 20px;
 }
 
 #player-input{
-  margin-top: 20px;
-}
-
-#play-buttons{
-  display: flex;
   margin-top: 10px;
 }
 
-#start-button {
+#difficulty{
+  margin-top: 10px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+}
+
+#start-button {
+  margin-top: 10px;
 }
 
 /* GAME SCREEN */
@@ -141,8 +148,8 @@ body{
   top: 50%;
   left: 46%;
   transform: translate(-50%, -50%);
-  height: 450px;
-  width: 700px;
+  height: 500px;
+  width: 710px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -154,7 +161,7 @@ body{
 }
 
 #game-screen-logo{
-  height: 40px;
+  height: 25px;
   position: absolute;
   align-self: flex-start;
   align-items: start;
@@ -164,26 +171,110 @@ body{
 
 #forklift{
   position: relative;
-  top: 0px;
-  left: 0px;
-  height: 80px;
-  width: 80px
+  height: '50px',
 }
 
 #truck{
-  height: 250px;
+  height: 200px;
   rotate: 270deg;
   position:absolute;
   left: 3px;
 }
 
 #pallet{
-  height: 60px;
+  height: 40px;
   position: relative;
 }
 
-#shelves{
-  height: 100px;
+#box-guys1,
+#box-guys2{
+  display: none;
+  position: absolute;
+  height: 70px;
+  rotate: 90deg;
+}
+
+#box-guys1{
+  top: 70px;
+  left: 260px;
+}
+
+#box-guys2{
+  right: 270px;
+}
+
+#pallet-guy{
+  display: none;
+  position: absolute;
+  height: 90px;
+  right: 250px;
+  bottom: 75px;
+  rotate: 90deg;
+}
+
+#box-guy1,
+#box-guy2
+{
+  display: none;
+  position: absolute;
+  height: 30px;
+  rotate: 180deg;
+}
+
+#box-guy1{
+  right: 160px;
+  bottom: 105px;
+}
+
+#box-guy2{
+  right: 190px;
+  bottom: 105px;
+}
+
+#shelves1,
+#shelves2,
+#shelves3,
+#shelves4,
+#shelves5,
+#shelves6,
+#shelves7,
+#shelves8
+{
+  display: none;
+  position: absolute;
+  height: 60px;
+}
+
+#shelves1{
+  left: 80px;
+  top: 80px;
+}
+
+#shelves2{
+  top: 80px;
+}
+
+#shelves3{
+  top: 80px;
+  right: 80px;
+}
+
+#shelves5{
+  right: 80px;
+}
+
+#shelves6{
+  right: 80px;
+  bottom: 80px;
+}
+
+#shelves7{
+  bottom: 80px;
+}
+
+#shelves8{
+  left: 80px;
+  bottom: 80px;
 }
 
 .bi-play {
@@ -202,6 +293,7 @@ body{
   align-items: start;
   top: 80px;
   left: 20px;
+  border: none;
 }
 
 #pause-button{
@@ -210,15 +302,16 @@ body{
   align-items: start;
   top: 80px;
   left: 20px;
+  border: none;
 }
 
 #score-board {
   height: auto;
   width: 150px;
   position: absolute;
-  top: 100px;
+  top: 160px;
   right: 20px;
-  background-color: white;
+  background: rgba(0, 0, 0, 0.75);
   border-radius: 10px;
   padding: 10px;
 }
@@ -228,14 +321,15 @@ body{
   overflow-wrap: break-word;
   word-wrap: break-word;
   max-width: 100%;
+  color: white;
 }
 
 .player-score {
   overflow-wrap: break-word;
   word-wrap: break-word;
   max-width: 100%;
+  color: white;
 }
-
 
 .player-name::before {
   content: "Player:";

@@ -33,14 +33,17 @@
       <div id="splash-screen" class="screen">
         <img src=".\images\Logo-white.png" alt="Jobsite Logo" id="splash-logo">
         <img src=".\images\Forklift-Side-View.svg" alt="Forklift Side View" id="forklift-side-view">
-        <div class="player-input">
-          <div id="player-input">
-            <input type="text" id="name-entry" name="name" placeholder="Enter Name" required />
+        <div class="player-selection">
+          <form id="player-input">
+            <input type="text" id="name-entry" placeholder="Enter Name" required />
             <input type="submit" id="join-id" value="Join" />
+          </form>
+          <div id="difficulty">
+            <button type="button" id="easy-button" class="btn btn-success">Easy</button>
+            <button type="button" id="medium-button" class="btn btn-warning">Medium</button>
+            <button type="button" id="hard-button" class="btn btn-danger">Hard</button>
           </div>
-          <div id="play-buttons">
-            <input type="submit" id="start-button" value="Start" disabled="disabled">
-          </div>
+          <button type="button" id="start-button" class="btn btn-success" disabled="disabled">Start</button>
         </div>
       </div>
       <div id="game-screen" class="screen">
@@ -49,10 +52,23 @@
           <img src=".\images\Forklift.svg" alt="Forklift" id="forklift">
           <img src=".\images\Truck-2.svg" alt="Truck" id="truck">
           <img src=".\images\Pallet.svg" alt="Pallet" id="pallet">
+          <img src=".\images\Box-Guys.svg" alt="Box Guys1" id="box-guys1">
+          <img src=".\images\Box-Guys.svg" alt="Box Guys2" id="box-guys2">
+          <img src=".\images\Shelves-1.svg" alt="Shelves1" id="shelves1">
+          <img src=".\images\Shelves-2.svg" alt="Shelves2" id="shelves2">
+          <img src=".\images\Shelves-3.svg" alt="Shelves3" id="shelves3">
+          <img src=".\images\Shelves-2.svg" alt="Shelves2" id="shelves4">
+          <img src=".\images\Shelves-1.svg" alt="Shelves1" id="shelves5">
+          <img src=".\images\Shelves-2.svg" alt="Shelves2" id="shelves6">
+          <img src=".\images\Shelves-1.svg" alt="Shelves1" id="shelves7">
+          <img src=".\images\Shelves-3.svg" alt="Shelves1" id="shelves8">
+          <img src=".\images\Pallet-Guy.svg" alt="PalletGuy" id="pallet-guy">
+          <img src=".\images\Box-Guy.svg" alt="Box Guy1" id="box-guy1">
+          <img src=".\images\Box-Guy.svg" alt="Box Guy2" id="box-guy2">
         </div>
         <div id="score-board">
           <div id="player">
-              <div class="player-name">Player 1</div>
+              <div class="player-name"></div>
               <div class="player-score">0</div>
           </div>
         </div>
