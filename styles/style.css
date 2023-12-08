@@ -171,7 +171,8 @@ body{
 
 #forklift{
   position: relative;
-  height: '50px',
+  height: '50px';
+  width: '35px';
 }
 
 #truck{
@@ -182,8 +183,9 @@ body{
 }
 
 #pallet{
-  height: 40px;
+  height: 30px;
   position: relative;
+  z-index: 9999;
 }
 
 #box-guys1,
@@ -314,6 +316,7 @@ body{
   background: rgba(0, 0, 0, 0.75);
   border-radius: 10px;
   padding: 10px;
+  color: white;
 }
 
 .player-name {
@@ -321,14 +324,16 @@ body{
   overflow-wrap: break-word;
   word-wrap: break-word;
   max-width: 100%;
-  color: white;
+}
+
+#score-title{
+  font-size: 28px;
 }
 
 .player-score {
   overflow-wrap: break-word;
   word-wrap: break-word;
   max-width: 100%;
-  color: white;
 }
 
 .player-name::before {
@@ -342,6 +347,21 @@ body{
   margin-right: 5px;
 }
 
+#timer-board {
+  height: auto;
+  width: 150px;
+  position: absolute;
+  top: 300px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.75);
+  border-radius: 10px;
+  padding: 10px;
+  color: white;
+}
+
+#time-title{
+  font-size: 28px;
+}
 
 #overlay {
   position: absolute;
@@ -350,16 +370,19 @@ body{
   width: 100%;
   height: 100%;
   background-color: #000;
-  opacity: 0;
-  display: none;
   border-radius: 10px;
   z-index: 1;
+  align-items: center;
+  justify-content: center;
+}
+
+#start-game{
+  font-size: 40px;;
 }
 
 #help-modal-trigger,
 #end-button,
-#play-button,
-#pause-button {
+#start-game {
   z-index: 9999;
 }
 

@@ -68,10 +68,16 @@
         </div>
         <div id="score-board">
           <div id="player">
+              <h2 id="score-title">Score</h2>
               <div class="player-name"></div>
               <div class="player-score">0</div>
           </div>
         </div>
+        <div id="timer-board">
+          <h2 id="time-title">Time Left</h2>
+          <h3 class="timer">0</h3>
+        </div>
+        <button type="button" id="start-game" class="btn btn-success">Start</button>
         <div id="overlay"></div>
         <button type="button" id="play-button" class="bi bi-play game-board-button"></button>
         <button type="button" id="pause-button" class="bi bi-pause game-board-button"></button>
@@ -114,7 +120,7 @@
                 aria-label="Close"
               ></button>
               </div>
-              <div class="modal-body">Enter name, select "Join", click "Start".</div>
+              <div class="modal-body">Enter name, select "Join", select a difficulty, click "Start"!</div>
               <div class="modal-footer">
               <button
                 type="button"

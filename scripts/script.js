@@ -8,7 +8,13 @@ const game = {
   loopDuration: 50,
   direction: 'up',
   difficulty: '',
+  gameTimer: null,
+  duration: 30000,
+  timeLeft: 0,
+  gameTimerStart: null,
   currentScreen: "#splash-screen",
+  playButton: document.getElementById("play-button"),
+  pauseButton: document.getElementById("pause-button"),
   playerInput: document.getElementById("player-input"),
   startGameButton: document.getElementById("start-button"),
   easyButton: document.getElementById("easy-button"),
@@ -16,6 +22,7 @@ const game = {
   hardButton: document.getElementById("hard-button"),
   playerNameDisplay: document.getElementsByClassName("player-name"),
   playerScoreDisplay: document.getElementsByClassName("player-score"),
+  timerDisplay: document.getElementsByClassName("timer"),
 
   showGameScreen(screenId) {
     $("#splash-screen").hide();
@@ -25,9 +32,12 @@ const game = {
     this.currentScreen = screenId;
 
     if (screenId === "#game-screen") {
-      overlay.style.display = 'block';
+      overlay.style.display = 'flex';
       overlay.style.opacity = '0.5';
       document.getElementById("game-screen").style.display = "flex";
+      $("#start-game").show();
+      game.playButton.style.zIndex = 0;
+      game.pauseButton.style.zIndex = 0;
       $("#end-button").show();
       $("#help-modal-trigger").show();
       $("#screen-container").css({
@@ -38,13 +48,15 @@ const game = {
         'top': '0px',
         'left': '-120px',
         'height': '50px',
+        'width': '35px',
         'transform': 'rotate(0deg)'
       });
       forklift.setAttribute('src', '../images/Forklift.svg');
-      player.score = 0; // Reset player score
+      player.score = 0;
       game.updatePlayerScore(player.score);
       this.spawnPallet();
       this.loadObstacles();
+      this.timer('start');
     } else if (screenId === "#game-over-screen") {
       $("#help-modal-trigger").hide();
       $("#end-button").hide();
@@ -185,9 +197,10 @@ const game = {
     );
   },
 
-  checkObstacleCollisions() {
+  checkObstacleCollisions(object) {
     const forkliftRect = document.getElementById('forklift').getBoundingClientRect();
     const truckRect = document.getElementById('truck').getBoundingClientRect();
+    const palletRect = document.getElementById('pallet').getBoundingClientRect();
     const easyObstacles = [
       document.getElementById('truck').getBoundingClientRect(),
     ];
@@ -230,17 +243,26 @@ const game = {
     } else {
       obstacles = easyObstacles;
     }
-  
-    for (let i = 0; i < obstacles.length; i++) {
-      if (this.isColliding(forkliftRect, truckRect) && this.palletCarry) {
-        return 'score';
+
+    if (object === 'forklift'){
+      for (let i = 0; i < obstacles.length; i++) {
+        if (this.isColliding(forkliftRect, truckRect) && this.palletCarry) {
+          return 'score';
+        }
+        if (this.isColliding(forkliftRect, obstacles[i])) {
+          return 'hit';
+        }
       }
-      if (this.isColliding(forkliftRect, obstacles[i])) {
-        return 'hit';
-      }
+      return 'safe';
     }
-    
-    return 'safe';
+    if (object === 'pallet'){
+      for (let i = 0; i < obstacles.length; i++) {
+        if (this.isColliding(palletRect, obstacles[i])) {
+          return 'hit';
+        }
+      }
+      return 'safe';
+    }
   },
 
   loadObstacles() {
@@ -294,33 +316,23 @@ const game = {
   spawnPallet() {
     const pallet = document.getElementById('pallet');
     const truck = document.getElementById('truck');
-  
+    
     const truckRect = truck.getBoundingClientRect();
   
     let palletSpawned = false;
+    const palletRect = pallet.getBoundingClientRect();
   
     while (!palletSpawned) {
-      const randomX = Math.floor(Math.random() * 580) - 300;
-      const randomY = Math.floor(Math.random() * 360) - 180;
+      const randomY = Math.floor(Math.random() * (420)) - 210;
+      const randomX = Math.floor(Math.random() * (630)) - 310;    
   
       pallet.style.top = `${randomY}px`;
       pallet.style.left = `${randomX}px`;
   
-      const palletRect = pallet.getBoundingClientRect();
+      const collision = game.checkObstacleCollisions('pallet');
+      const palletPosition = pallet.getBoundingClientRect();
   
-      const palletTop = palletRect.top;
-      const palletBottom = palletRect.bottom;
-      const palletLeft = palletRect.left;
-      const palletRight = palletRect.right;
-  
-      if (
-        palletBottom >= truckRect.top + 20 &&
-        palletTop <= truckRect.bottom - 20 &&
-        palletRight >= truckRect.left + 20 &&
-        palletLeft <= truckRect.right - 20
-      ) {
-        continue;
-      } else {
+      if (collision === 'safe' && !game.isColliding(palletPosition, truckRect)) {
         palletSpawned = true;
       }
     }
@@ -356,22 +368,57 @@ const game = {
     }
   },
 
+  timer(state) {
+    if (state === 'start') {
+      this.gameTimerStart = Date.now();
+      this.timeLeft = this.duration; // Set initial time left to full duration
+      this.updateTimerDisplay(); // Update the timer display
+      this.gameTimer = setTimeout(() => {
+        this.showGameScreen("#game-over-screen");
+        clearInterval(this.loopIntervalId);
+      }, this.duration);
+    } else if (state === 'pause') {
+      clearTimeout(this.gameTimer);
+      this.timeLeft -= (Date.now() - this.gameTimerStart); // Update time left based on elapsed time
+      this.updateTimerDisplay(); // Update the timer display
+    } else if (state === 'play') {
+      this.gameTimerStart = Date.now();
+      this.gameTimer = setTimeout(() => {
+        this.showGameScreen("#game-over-screen");
+        clearInterval(this.loopIntervalId);
+      }, this.timeLeft);
+      this.updateTimerDisplay(); // Update the timer display
+    }
+  },
+  
+  updateTimerDisplay() {
+    const remainingTime = Math.ceil(this.timeLeft / 1000); // Calculate remaining time in seconds
+    this.timerDisplay[0].textContent = `${remainingTime}s`; // Assuming timerDisplay is an array of elements
+  },
+  
+  
+
   gameLoop() {
+    const remainingTime = Math.ceil((game.duration - (Date.now() - game.gameTimerStart)) / 1000);
+
+    const timerDisplay = document.querySelector('.timer');
+    timerDisplay.textContent = `${remainingTime}s`;
+
     let scoreUpdated = false;
     if (game.pickUpPallet()){
       $("#pallet").hide();
       forklift.setAttribute('src', '../images/Forklift-Loaded.svg');
       $("#forklift").css({
         'height': '60px',
-        // 'width': '70px',
+        'width': '45px',
       });
       game.palletCarry = true;
     }
-    if (game.checkObstacleCollisions() === 'score' && game.palletCarry && !scoreUpdated){
+    if (game.checkObstacleCollisions('forklift') === 'score' && game.palletCarry && !scoreUpdated){
       forklift.setAttribute('src', '../images/Forklift.svg');
       $("#forklift").css({
         'height': '50px',
-        // 'width': '60px',
+        'width': '35px',
       });
       game.palletCarry = false;
       player.incrementPlayerScore();
@@ -396,7 +443,7 @@ const player = {
   moveForkliftUp() {
     const forkliftElement = document.getElementById('forklift');
     const currentPosition = parseInt(window.getComputedStyle(forkliftElement).top);
-    const collision = game.checkObstacleCollisions();
+    const collision = game.checkObstacleCollisions('forklift');
   
     if (currentPosition > -210) {
       const newPosition = currentPosition - 15;
@@ -421,7 +468,7 @@ const player = {
   moveForkliftDown() {
     const forkliftElement = document.getElementById('forklift');
     const currentPosition = parseInt(window.getComputedStyle(forkliftElement).top);
-    const collision = game.checkObstacleCollisions();
+    const collision = game.checkObstacleCollisions('forklift');
 
     if (currentPosition < 210) {
       const newPosition = currentPosition + 15;
@@ -446,7 +493,7 @@ const player = {
   moveForkliftLeft() {
     const forkliftElement = document.getElementById('forklift');
     const currentPosition = parseInt(window.getComputedStyle(forkliftElement).left);
-    const collision = game.checkObstacleCollisions();
+    const collision = game.checkObstacleCollisions('forklift');
   
     if (currentPosition > -310) {
       const newPosition = currentPosition - 15;
@@ -464,7 +511,7 @@ const player = {
       else if ((collision === 'hit' || collision === 'score') && game.direction === "right"){
         forkliftElement.style.left = `${newPosition}px`;
       }
-      else {
+      else if((collision === 'hit' || collision === 'score') && game.direction === "left"){
         forkliftElement.style.left = `${currentPosition + 15}px`;
       }
     }
@@ -474,7 +521,7 @@ const player = {
   moveForkliftRight() {
     const forkliftElement = document.getElementById('forklift');
     const currentPosition = parseInt(window.getComputedStyle(forkliftElement).left);
-    const collision = game.checkObstacleCollisions();
+    const collision = game.checkObstacleCollisions('forklift');
 
     if(currentPosition < 320){
       const newPosition = currentPosition + 15;
@@ -558,12 +605,22 @@ $('#help-modal, #more-info-modal').on('hidden.bs.modal', function () {
   game.toggleButtonsOnHelpModal(false);
 });
 
+$("#start-game").on("click", () => {
+  $("#start-game").hide();
+  game.playButton.style.zIndex = 9999;
+  game.pauseButton.style.zIndex = 9999;
+  game.gameState();
+  game.timer('start');
+});
+
 $("#play-button").on("click", () => {
   game.gameState();
+  game.timer('play');
 });
 
 $("#pause-button").on("click", () => {
   game.gameState();
+  game.timer('pause');
 });
 
 $("#start-button").on("click", () => {
