@@ -56,7 +56,7 @@ const game = {
       game.updatePlayerScore(player.score);
       this.spawnPallet();
       this.loadObstacles();
-      this.timer('start');
+      // this.timer('start');
     } else if (screenId === "#game-over-screen") {
       $("#help-modal-trigger").hide();
       $("#end-button").hide();
@@ -371,37 +371,44 @@ const game = {
   timer(state) {
     if (state === 'start') {
       this.gameTimerStart = Date.now();
-      this.timeLeft = this.duration; // Set initial time left to full duration
-      this.updateTimerDisplay(); // Update the timer display
+      this.timeLeft = this.duration;
+      this.updateTimerDisplay();
       this.gameTimer = setTimeout(() => {
         this.showGameScreen("#game-over-screen");
         clearInterval(this.loopIntervalId);
       }, this.duration);
     } else if (state === 'pause') {
       clearTimeout(this.gameTimer);
-      this.timeLeft -= (Date.now() - this.gameTimerStart); // Update time left based on elapsed time
-      this.updateTimerDisplay(); // Update the timer display
+      this.timeLeft -= (Date.now() - this.gameTimerStart);
+      this.updateTimerDisplay();
+      clearInterval(game.loopIntervalId);
     } else if (state === 'play') {
-      this.gameTimerStart = Date.now();
+      // this.gameTimerStart = Date.now();
       this.gameTimer = setTimeout(() => {
         this.showGameScreen("#game-over-screen");
         clearInterval(this.loopIntervalId);
       }, this.timeLeft);
-      this.updateTimerDisplay(); // Update the timer display
+      console.log(this.timeLeft);
+      this.updateTimerDisplay();
+      game.loopIntervalId = setInterval(this.gameLoop, this.loopDuration);
     }
   },
   
   updateTimerDisplay() {
-    const remainingTime = Math.ceil(this.timeLeft / 1000); // Calculate remaining time in seconds
-    this.timerDisplay[0].textContent = `${remainingTime}s`; // Assuming timerDisplay is an array of elements
+    // console.log(this.timeLeft);
+    const remainingTime = Math.ceil(this.timeLeft / 1000);
+    // console.log(remainingTime);
+    this.timerDisplay[0].textContent = `${remainingTime}s`;
   },
   
   
 
   gameLoop() {
     const remainingTime = Math.ceil((game.duration - (Date.now() - game.gameTimerStart)) / 1000);
+    console.log(remainingTime);
 
     const timerDisplay = document.querySelector('.timer');
+    console.log(timerDisplay);
     timerDisplay.textContent = `${remainingTime}s`;
 
     let scoreUpdated = false;
