@@ -8,10 +8,9 @@ const game = {
   loopDuration: 50,
   direction: 'up',
   difficulty: '',
-  gameTimer: null,
   duration: 30000,
   timeLeft: 0,
-  gameTimerStart: null,
+  state: '',
   currentScreen: "#splash-screen",
   playButton: document.getElementById("play-button"),
   pauseButton: document.getElementById("pause-button"),
@@ -22,7 +21,6 @@ const game = {
   hardButton: document.getElementById("hard-button"),
   playerNameDisplay: document.getElementsByClassName("player-name"),
   playerScoreDisplay: document.getElementsByClassName("player-score"),
-  timerDisplay: document.getElementsByClassName("timer"),
 
   showGameScreen(screenId) {
     $("#splash-screen").hide();
@@ -56,8 +54,9 @@ const game = {
       game.updatePlayerScore(player.score);
       this.spawnPallet();
       this.loadObstacles();
-      // this.timer('start');
     } else if (screenId === "#game-over-screen") {
+      game.duration = 30000;
+      document.getElementById("timer").textContent = (game.duration/1000).toFixed(0);
       $("#help-modal-trigger").hide();
       $("#end-button").hide();
       document.getElementById("game-over-screen").style.display = "flex";
@@ -368,48 +367,15 @@ const game = {
     }
   },
 
-  timer(state) {
-    if (state === 'start') {
-      this.gameTimerStart = Date.now();
-      this.timeLeft = this.duration;
-      this.updateTimerDisplay();
-      this.gameTimer = setTimeout(() => {
-        this.showGameScreen("#game-over-screen");
-        clearInterval(this.loopIntervalId);
-      }, this.duration);
-    } else if (state === 'pause') {
-      clearTimeout(this.gameTimer);
-      this.timeLeft -= (Date.now() - this.gameTimerStart);
-      this.updateTimerDisplay();
-      clearInterval(game.loopIntervalId);
-    } else if (state === 'play') {
-      // this.gameTimerStart = Date.now();
-      this.gameTimer = setTimeout(() => {
-        this.showGameScreen("#game-over-screen");
-        clearInterval(this.loopIntervalId);
-      }, this.timeLeft);
-      console.log(this.timeLeft);
-      this.updateTimerDisplay();
-      game.loopIntervalId = setInterval(this.gameLoop, this.loopDuration);
-    }
-  },
-  
-  updateTimerDisplay() {
-    // console.log(this.timeLeft);
-    const remainingTime = Math.ceil(this.timeLeft / 1000);
-    // console.log(remainingTime);
-    this.timerDisplay[0].textContent = `${remainingTime}s`;
-  },
-  
-  
-
   gameLoop() {
-    const remainingTime = Math.ceil((game.duration - (Date.now() - game.gameTimerStart)) / 1000);
-    console.log(remainingTime);
 
-    const timerDisplay = document.querySelector('.timer');
-    console.log(timerDisplay);
-    timerDisplay.textContent = `${remainingTime}s`;
+    if (game.state === 'play') {
+      game.duration -= 50;
+    }
+    document.getElementById("timer").textContent = (game.duration/1000).toFixed(0);
+    if (game.duration <= 0){
+      game.showGameScreen("#game-over-screen");
+    }
 
     let scoreUpdated = false;
     if (game.pickUpPallet()){
@@ -465,7 +431,7 @@ const player = {
         forkliftElement.style.top = `${newPosition}px`;
       }
       else{
-        forkliftElement.style.top = `${currentPosition + 15}px`;
+        // forkliftElement.style.top = `${currentPosition + 15}px`;
 
       }
     }
@@ -491,7 +457,7 @@ const player = {
         forkliftElement.style.top = `${newPosition}px`;
       }
       else {
-        forkliftElement.style.top = `${currentPosition - 15}px`;
+        // forkliftElement.style.top = `${currentPosition - 15}px`;
       }
     }
     forkliftElement.style.transform = 'rotate(180deg)';
@@ -519,7 +485,7 @@ const player = {
         forkliftElement.style.left = `${newPosition}px`;
       }
       else if((collision === 'hit' || collision === 'score') && game.direction === "left"){
-        forkliftElement.style.left = `${currentPosition + 15}px`;
+        // forkliftElement.style.left = `${currentPosition + 15}px`;
       }
     }
     forkliftElement.style.transform = 'rotate(-90deg)';
@@ -547,7 +513,7 @@ const player = {
         forkliftElement.style.left = `${newPosition}px`;
       }
       else {
-        forkliftElement.style.left = `${currentPosition - 15}px`;
+        // forkliftElement.style.left = `${currentPosition - 15}px`;
       }
     }
     forkliftElement.style.transform = 'rotate(90deg)';
@@ -617,20 +583,20 @@ $("#start-game").on("click", () => {
   game.playButton.style.zIndex = 9999;
   game.pauseButton.style.zIndex = 9999;
   game.gameState();
-  game.timer('start');
 });
 
 $("#play-button").on("click", () => {
+  game.state = 'play';
   game.gameState();
-  game.timer('play');
 });
 
 $("#pause-button").on("click", () => {
+  game.state = 'pause';
   game.gameState();
-  game.timer('pause');
 });
 
 $("#start-button").on("click", () => {
+  game.state = 'play';
   game.showGameScreen("#game-screen");
 });
 
