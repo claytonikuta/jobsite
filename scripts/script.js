@@ -8,7 +8,7 @@ const game = {
   loopDuration: 50,
   direction: 'up',
   difficulty: '',
-  duration: 30000,
+  duration: 60000,
   timeLeft: 0,
   state: '',
   currentScreen: "#splash-screen",
